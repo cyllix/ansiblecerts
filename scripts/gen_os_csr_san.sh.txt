@@ -1,0 +1,46 @@
+[NBNCO\blaineparris@svdam3100001ee debug]$ cat ~/scripts/gen_os_csr_san.sh
+clear
+. /home/NBNCO/blaineparris/scripts/script_vars
+echo ${ST}
+
+DM=`echo ${FQDN} | cut -d"." -f2-`
+
+X1=`echo ${SHOST} | sed 's/[^0-9]*//g'`
+if (( ${X1} % 2 == 0 )); then
+ X2=$(( ${X1} - 1 ))
+else
+ X2=$(( ${X1} + 1 ))
+fi
+
+LH=`echo ${SHOST} | sed -E 's/[0-9]+/:/g' | cut -d":" -f1`
+RH=`echo ${SHOST} | sed -E 's/[0-9]+/:/g' | cut -d":" -f2`
+
+H1="${LH}${X1}${RH}.${DM}"
+H2="${LH}${X2}${RH}.${DM}"
+
+openssl req -new -newkey rsa:2048 -nodes -keyout ${CSRFILE}.key  -out ${CSRFILE} -subj "/C=AU/ST=VIC/L=Melbourne/O=NBN/OU=putEnvironmentHere/CN=putServerNameHere" -addext "subjectAltName=DNS:${H1},DNS:${H2}"
+
+openssl req -noout -text -in ${CSRFILE} | egrep "DNS|Subject"
+
+
+echo "
+
+"
+echo "                  ##################################################"
+echo "                     Certificate Request I N S T R U C T I O N S"
+echo "                  ##################################################"
+echo "
+
+"
+echo "1. For *DNS Name Use : `tput bold`${FQDN}`tput sgr0`"
+echo "2. For *Additional DNS Names Use : `tput bold`${SHOST}`tput sgr0`"
+echo "3. Copy and Paste the following into the box that says *Paste CSR below:"
+tput bold
+cat ${CSRFILE}
+tput sgr0
+echo "
+
+"
+echo "For Production NBN certificate Requests use this link `tput smul` https://pki.symauth.com/certificate-service/?ac=516719&pf=2.16.840.1.113733.1.16.1.5.1.2.69508833 `tput rmul`"
+echo "For Non-Production NBN Certificate Requests use this link `tput smul` https://pki.symauth.com/certificate-service/?ac=516719&pf=2.16.840.1.113733.1.16.1.5.1.2.68857288 `tput rmul`"
+

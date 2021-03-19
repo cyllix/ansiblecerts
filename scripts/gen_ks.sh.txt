@@ -1,0 +1,15 @@
+[NBNCO\blaineparris@svdam3100001ee ~]$ cat scripts/gen_ks.sh
+clear
+. /home/NBNCO/blaineparris/scripts/script_vars
+echo ${ST}
+
+echo "Processing for ${ST}"
+
+echo keytool -genkey -storepass "**" -keypass "***" -alias tomcat -keyalg RSA -keystore ${KSFILE} -dname CN=${FQDN},OU=Production,O="NBN Co Limited",ST=${ST},C=AU
+keytool -genkey -storepass ${STOREPASS} -keypass ${STOREPASS} -alias tomcat -keyalg RSA -keystore ${KSFILE} -dname CN=${FQDN},OU=Production,O="NBN Co Limited",ST=${ST},C=AU
+
+#echo keytool -certreq -storepass "**" -keyalg RSA -alias tomcat -file ${CSRFILE} -keystore ${KSFILE}
+#keytool -certreq -storepass ${STOREPASS} -keyalg RSA -alias tomcat -file ${CSRFILE} -keystore ${KSFILE}
+
+#Valiate
+#keytool -list -storepass ${STOREPASS} -keystore ${KSFILE}

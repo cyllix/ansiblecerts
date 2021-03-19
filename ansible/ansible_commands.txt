@@ -1,0 +1,31 @@
+MAP
+
+0. Maintenance
+#Tar the latest version of the scripts
+tar cfzf utils.tar.gz ./scripts
+
+#Ensure that the latest utils.tar.gz is copied over
+ansible-playbook ansible/playbook_cert.yml  -i ansible/hosts --tags "deldir,updateutils" --ask-pass --list-tags --list-hosts
+ansible-playbook ansible/playbook_cert.yml  -i ansible/hosts --tags "deldir,updateutils" --ask-pass 
+
+
+1. Verify Variables are set correctly
+#List Variables used
+ansible-playbook ansible/playbook_cert.yml  -i ansible/hosts -l oscerts  --list-tags --list-hosts --check
+ansible-playbook ansible/playbook_cert.yml  -i ansible/hosts --tags "printvars" --ask-pass 
+ansible-playbook ansible/playbook_cert.yml  -i ansible/hosts -l oscerts --tags "printvars,createoskey,getoscsr,getcsr" --list-tags --list-hosts
+
+ansible-playbook ansible/playbook_cert.yml  -i ansible/hosts -l kscerts --tags "printvars,createkeystore,genkscsr,getcsr" --list-tags --list-hosts
+
+ansible-playbook ansible/playbook_cert.yml  -i ansible/hosts --tags "printvars" --syntax-check--ask-pass 
+
+2. Create Keystore - Run against hosts=kscerts 
+ansible-playbook ansible/playbook_cert.yml  -i ansible/hosts -l kscerts --tags "printvars,createkeystore,genkscsr,getcsr" --ask-pass
+
+
+
+
+
+
+2. Create OS Private Key - Run against hosts=oscerts 
+ansible-playbook ansible/playbook_cert.yml  -i ansible/hosts -l oscerts --tags "printvars,createoskey,getoscsr,getcsr"

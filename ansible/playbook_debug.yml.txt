@@ -1,0 +1,9 @@
+[NBNCO\blaineparris@svdam3100001ee ~]$ cat ansible/playbook_debug.yml
+- name: Playbook To Test Variables
+  hosts: nxtui
+
+  tasks:
+
+  - name: What is my hostname
+    debug:
+     msg: "Inventory_Hostname = {{ inventory_hostname }} Ansible_Hostname = {{ ansible_hostname }}"

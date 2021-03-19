@@ -1,0 +1,39 @@
+[NBNCO\blaineparris@svdam3100001ee scripts]$ cat script_vars
+#export TARGETDIR=/opt/arris/certs
+export TARGETDIR=/home/NBNCO/blaineparris/certs
+export SHOST=`hostname -s`
+export FQDN=`hostname`
+export STOREPASS="4l4RMC3n7r4l"
+
+export CSRFILE=${TARGETDIR}/appserver.csr
+export ROOTCACERT=${TARGETDIR}/root.crt
+export SERVERCRT=${TARGETDIR}/${FQDN}.crt
+export KEYPASS=${STOREPASS}
+export VIPFQDN="svdau3100000ee.slb.hfc.ntf.lab"
+
+export KSFILE="${TARGETDIR}/appserver-keystore.jks"
+export CACERT="${TARGETDIR}/cacert.pem"
+export CERT="${TARGETDIR}/cert.pem"
+export CERTKEY="${TARGETDIR}/key.pem"
+
+export OU="EDE"
+
+if [ `echo ${SHOST} | grep -c "31"` -gt 0 ]; then
+ export ST="VIC"
+ export LOC="Melbourne"
+else
+ export ST="SYD"
+ export LOC="Sydney"
+fi
+
+
+if [ ! -d ${TARGETDIR} ]; then
+ mkdir ${TARGETDIR}
+fi
+
+
+#Defunct
+#export CSRFILE=${TARGETDIR}/${FQDN}.csr
+#export OSCSRSANFILE=${TARGETDIR}/OSappserver.csr
+#export ANSIBLE_HOST_KEY_CHECKING=False
+#export KSFILE=${TARGETDIR}/${SHOST}.jks

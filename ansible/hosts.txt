@@ -1,0 +1,15 @@
+[NBNCO\blaineparris@svdam3100001ee ~]$ cat ansible/hosts
+[hosts:children]
+nxtan
+nxtcerts
+
+[nxtan]
+svdam3100001ee.nbndc.local
+
+[nxtcerts]
+svdau3100001ee.nbndc.local
+svdau3100002ee.nbndc.local
+svdmq3100001ee.nbndc.local
+svdmq3100002ee.nbndc.local
+svdpn3100001ee.nbndc.local
+svdpn3100002ee.nbndc.local

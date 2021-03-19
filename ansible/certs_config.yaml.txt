@@ -1,0 +1,11 @@
+[NBNCO\blaineparris@svdam3100001ee ~]$ cat certs_config.yaml
+certsdir: "/home/NBNCO/blaineparris/certs"
+tmpcertsdir: "/opt/arris/certs"
+csr: "{{ certsdir }}/appserver.csr"
+jks: "{{ certsdir }}/appserver-keystore.jks"
+cacert: "{{ certsdir }}/cacert.pem"
+cert: "{{ certsdir }}/cert.pem"
+certkey: "{{ certsdir }}/key.pem"
+scriptsdir: "/home/NBNCO/blaineparris/scripts"
+destdir: "/home/NBNCO/blaineparris"
+vipfqdn: "svdau3100000ee.slb.hfc.ntf.lab"

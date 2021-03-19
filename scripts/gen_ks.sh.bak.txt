@@ -1,0 +1,50 @@
+[NBNCO\blaineparris@svdam3100001ee ~]$ cat scripts/gen_ks.sh.bak
+clear
+TARGETDIR=/home/NBNCO/blaineparris/certs
+SHOST=`hostname -s`
+FQDN=`hostname`
+KSFILE=${TARGETDIR}/${SHOST}.jks
+CSRFILE=${TARGETDIR}/${FQDN}.csr
+ROOTCACERT=${TARGETDIR}/root.crt
+SERVERCRT=${TARGETDIR}/${FQDN}.crt
+STOREPASS="4l4RMC3n7r4l"
+KEYPASS=${STOREPASS}
+#ctr=`echo "${SHOST}" | grep -c "31"`
+#ST=`[ ${ctr} >0 ] && "VIC" || "SYD"`
+if [ `echo ${SHOST} | grep -c "31"` -gt 0 ]; then
+ ST="VIC"
+else
+ ST="SYD"
+fi
+echo "Processing for ${ST}"
+
+echo keytool -genkey -storepass "**" -keypass "***" -alias tomcat -keyalg RSA -keystore ${KSFILE} -dname CN=${FQDN},OU=Production,O="NBN Co Limited",ST=${ST},C=AU
+keytool -genkey -storepass ${STOREPASS} -keypass ${STOREPASS} -alias tomcat -keyalg RSA -keystore ${KSFILE} -dname CN=${FQDN},OU=Production,O="NBN Co Limited",ST=${ST},C=AU
+
+echo keytool -certreq -storepass "**" -keyalg RSA -alias tomcat -file ${CSRFILE} -keystore ${KSFILE}
+keytool -certreq -storepass ${STOREPASS} -keyalg RSA -alias tomcat -file ${CSRFILE} -keystore ${KSFILE}
+
+#Valiate
+keytool -list -storepass ${STOREPASS} -keystore ${KSFILE}
+
+echo "
+
+"
+echo "                  ##################################################"
+echo "                     Certificate Request I N S T R U C T I O N S"
+echo "                  ##################################################"
+echo "
+
+"
+echo "For Production NBN certificate Requests use this link `tput smul` https://pki.symauth.com/certificate-service/?ac=516719&pf=2.16.840.1.113733.1.16.1.5.1.2.69508833 `tput rmul`"
+echo "For Non-Production NBN Certificate Requests use this link `tput smul` https://pki.symauth.com/certificate-service/?ac=516719&pf=2.16.840.1.113733.1.16.1.5.1.2.68857288 `tput rmul`"
+
+echo "
+
+"
+echo "1. For *DNS Name Use : `tput bold`${FQDN}`tput sgr0`"
+echo "2. For *Additional DNS Names Use : `tput bold`${SHOST}`tput sgr0`"
+echo "3. Copy and Paste the following into the box that says *Paste CSR below:"
+tput bold
+cat ${FQDN}.csr
+tput sgr0

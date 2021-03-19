@@ -1,0 +1,42 @@
+[NBNCO\blaineparris@svdam3100001ee ~]$ cat  ansible/playbook_utils.yml
+- name: Cert Management
+  gather_facts: yes
+  hosts: nxtcerts
+  tasks:
+
+  - name: Create Keystore
+    script: /home/NBNCO/blaineparris/scripts/gen_ks2.sh
+    tags: createkeystore
+
+  - name: Generate CSR
+    script: /home/NBNCO/blaineparris/scripts/gen_csr.sh
+    tags: gencsr
+
+  - name: Recursively remove directory
+    file:
+      path: /home/NBNCO/blaineparris/scripts/*
+      state: absent
+    tags: deldir
+
+  - name: Update Utils
+    unarchive:
+     src: /home/NBNCO/blaineparris/utils.tar.gz
+     dest: /home/NBNCO/blaineparris/
+     copy: yes
+     list_files: yes
+    tags: updateutils
+
+  - name: Copy CSR
+    fetch:
+     src: "/home/NBNCO/blaineparris/certs/{{ inventory_hostname }}.csr"
+     dest: /home/NBNCO/blaineparris/remcert/
+    tags: copycsr
+
+  - name: Save Copy CSR
+    fetch:
+     src: "/home/NBNCO/blaineparris/certs/{{ inventory_hostname }}.csr"
+     dest: /home/NBNCO/blaineparris/remcert/
+     copy: yes
+     flat: yes
+     list_files: yes
+    tags: savecopycsr

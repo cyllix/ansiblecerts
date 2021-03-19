@@ -1,0 +1,8 @@
+[NBNCO\blaineparris@svdam3100001ee debug]$ cat  ~/scripts/scpfile.sh
+for x in svdau3100001ee.nbndc.local svdau3100002ee.nbndc.local svdmq3100001ee.nbndc.local svdmq3100002ee.nbndc.local svdpn3100001ee.nbndc.local svdpn3100002ee.nbndc.local
+do
+echo ${x}
+mkdir /home/NBNCO/blaineparris/${x}
+#scp ${x}:/home/NBNCO/blaineparris/certs/${x}.csr /home/NBNCO/blaineparris/${x}
+scp ${x}:/home/NBNCO/blaineparris/certs/${x}.jks /home/NBNCO/blaineparris/${x}
+done

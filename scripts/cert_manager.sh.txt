@@ -1,0 +1,95 @@
+[NBNCO\blaineparris@svdam3100001ee ~]$ cat  cert_manager.sh
+#!/usr/bin/bash
+while true
+do
+clear
+#Initialize
+. /home/NBNCO/blaineparris/scripts/script_vars
+
+echo "  ****************"
+echo "  Cert Manager - Menu"
+echo "  ****************"
+echo "---------------------"
+echo " Maintenance Options"
+echo "---------------------"
+echo "  00. Update Scripts in Targets"
+echo "  01. Update Local vars file ./ansible/certs_config.yaml"
+echo "---------------------"
+echo " Initial Certificate Options"
+echo "---------------------"
+echo "  11. Create Keystore"
+echo "  12. Get Keystore and CSR"
+echo "  13. Display Keystore CSR for Submission"
+echo "  14. Create OS Private Key"
+echo "  15. Get Private Key File"
+echo "  16. Display OS CSR"
+echo "---------------------"
+echo " Installing Certificate Options"
+echo "---------------------"
+echo "  22 Create Keystore"
+echo "  23 Get Keystore and CSR"
+echo "  24 Display Keystore CSR for Submission"
+echo "---------------------"
+echo " Get Me Outta Here"
+echo "---------------------"
+echo "  99 Exit (Or CTRL-C)"
+read ans
+case ${ans} in
+ 00)
+ rm utils.tar.gz
+ tar cvzf utils.tar.gz ./scripts
+ ansible-playbook ansible/playbook_cert.yml  -i ansible/hosts --tags "deldir,updateutils" --list-tags --list-hosts
+ #ansible-playbook ansible/playbook_cert.yml  -i ansible/hosts --tags "deldir,updateutils" --ask-pass
+ ;;
+ 01)
+ cat <<'EOF'>./ansible/certs_config.yaml
+certsdir: "/home/NBNCO/blaineparris/certs"
+tmpcertsdir: "/opt/arris/certs"
+csr: "{{ certsdir }}/appserver.csr"
+jks: "{{ certsdir }}/appserver-keystore.jks"
+cacert: "{{ certsdir }}/cacert.pem"
+cert: "{{ certsdir }}/cert.pem"
+certkey: "{{ certsdir }}/key.pem"
+scriptsdir: "/home/NBNCO/blaineparris/scripts"
+destdir: "/home/NBNCO/blaineparris"
+vipfqdn: "svdau3100000ee.slb.hfc.ntf.lab"
+EOF
+cat ./ansible/certs_config.yaml
+ ;;
+ 11)
+ ansible-playbook ansible/playbook_cert.yml  -i ansible/hosts -l kscerts --tags "printvars,createkeystore,genkssancsr " --list-tags --list-hosts
+ #ansible-playbook ansible/playbook_cert.yml  -i ansible/hosts -l kscerts --tags "printvars,createkeystore,genkssancsr" --ask-pass
+ ;;
+ 12)
+ ansible-playbook ansible/playbook_cert.yml  -i ansible/hosts -l kscerts --tags "printvars,copycsr,copyjks" --list-tags --list-hosts
+ #ansible-playbook ansible/playbook_cert.yml  -i ansible/hosts -l kscerts --tags "printvars,copycsr,copyjks" --ask-pass
+ ;;
+ 13)
+ openssl req -noout -text -in remotecert/svdau3100001ee.nbndc.local/appserver.csr| egrep "DNS|Subject"
+ openssl req -noout -text -in remotecert/svdau3100002ee.nbndc.local/appserver.csr| egrep "DNS|Subject"
+ ;;
+ 14)
+ ansible-playbook ansible/playbook_cert.yml  -i ansible/hosts -l oscerts --tags "printvars,genoscsr" --list-tags --list-hosts
+ #ansible-playbook ansible/playbook_cert.yml  -i ansible/hosts -l oscerts --tags "printvars,genoscsr" –ask-pass
+ ;;
+ 15)
+ ansible-playbook ansible/playbook_cert.yml  -i ansible/hosts -l oscerts --tags "printvars,copycsr,copykey" --list-tags --list-hosts
+ #ansible-playbook ansible/playbook_cert.yml  -i ansible/hosts -l oscerts --tags "printvars,copycsr,copykey" –ask-pass
+ ;;
+ 16)
+ openssl req -noout -text -in remotecert/svdmq3100001ee.nbndc.local/appserver.csr| egrep "DNS|Subject"
+ openssl req -noout -text -in remotecert/svdmq3100002ee.nbndc.local/appserver.csr| egrep "DNS|Subject"
+ ;;
+ 17)
+ echo "Not Ready"
+ ;;
+ 18)
+ echo "Not Ready"
+ ;;
+ 99)
+ echo "Bye"
+ exit
+ ;;
+esac
+ echo "Hit Enter To Continue"; read t
+done

@@ -1,0 +1,103 @@
+[NBNCO\blaineparris@svdam3100001ee ~]$ cat ansible/playbook_cert.yml
+- name: Cert Management
+  gather_facts: yes
+  hosts: all
+  vars_files:
+      - ./certs_config.yaml
+  tasks:
+
+  - name: Create Keystore
+    script: "{{ scriptsdir }}/gen_ks.sh"
+    tags: createkeystore
+
+  - name: Generate KS SAN CSR
+    script:  "{{ scriptsdir }}/gen_kscsr_san.sh"
+    tags: genkssancsr
+
+  - name: Create OS Private Key
+    script:  "{{ scriptsdir }}/gen_oskey.sh"
+    tags: createoskey
+
+  - name: Generate OS CSR
+    script:  "{{ scriptsdir }}/gen_oscsr.sh"
+    tags: genoscsr
+
+  - name: Recursively remove directory
+    file:
+      path:  "{{ scriptsdir }}"
+      state: absent
+    tags: deldir
+
+  - name: Update Utils
+    unarchive:
+     src:  "{{ destdir }}/utils.tar.gz"
+     dest: "{{ destdir }}/"
+     copy: yes
+     list_files: yes
+    tags: updateutils
+
+  - name: Copy CSR
+    fetch:
+     src: "{{ csr }}"
+     dest: "{{ destdir }}/remotecert/{{ inventory_hostname }}/"
+     copy: yes
+     flat: yes
+     list_files: yes
+    tags: copycsr
+
+  - name: Copy key
+    fetch:
+     src: '{{ certkey }}'
+     dest: "{{ destdir }}/remotecert/{{ inventory_hostname }}/"
+     copy: yes
+     flat: yes
+    tags: copykey
+
+  - name: Copy CA
+    fetch:
+     src: '{{ cacert }}'
+     dest: "{{ destdir }}/remotecert/{{ inventory_hostname }}/"
+     copy: yes
+     flat: yes
+    tags: copyca
+
+  - name: Copy Cert
+    fetch:
+     src: '{{ cert }}'
+     dest: "{{ destdir }}/remotecert/{{ inventory_hostname }}/"
+     copy: yes
+     flat: yes
+    tags: copycert
+
+  - name: Copy JKS
+    fetch:
+     src: "{{ jks }}"
+     dest: "{{ destdir }}/remotecert/{{ inventory_hostname }}/"
+     copy: yes
+     flat: yes
+     list_files: yes
+    tags: copyjks
+
+  - name: "Printing Variables used"
+    run_once: true
+    vars:
+      msg: |
+         "tmpcertsdir: {{ tmpcertsdir }} "
+         "certsdir: {{ certsdir }} "
+         "csr: {{ csr }} "
+         "jks: {{ jks }} "
+         "cacert: {{ cacert }} "
+         "cert: {{ cert }} "
+         "certkey: {{ certkey }} "
+         "scriptsdir: {{ scriptsdir }} "
+         "destdir: {{ destdir }}"
+         "vipfqdn: {{ vipfqdn }}"
+    debug:
+      msg: "{{ msg.split('\n') }}"
+    tags: printvarso
+
+  - name: "Printing Vars"
+    run_once: true
+    debug:
+      msg: "{{ certs_config.split('\n') }}"
+    tags: printvars

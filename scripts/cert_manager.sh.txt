@@ -1,5 +1,30 @@
 [NBNCO\blaineparris@svdam3100001ee ~]$ cat  cert_manager.sh
 #!/usr/bin/bash
+
+dispinstruct()
+{
+echo "
+
+"
+echo "                  ##################################################"
+echo "                     Certificate Request I N S T R U C T I O N S"
+echo "                  ##################################################"
+echo "
+
+"
+echo "1. For *DNS Name Use : `tput bold`${FQDN}`tput sgr0`"
+echo "2. For *Additional DNS Names Use : `tput bold`${SHOST}`tput sgr0`"
+echo "3. Copy and Paste the following into the box that says *Paste CSR below:"
+tput bold
+cat ${CSRFILE}
+tput sgr0
+echo "
+
+"
+echo "For Production NBN certificate Requests use this link `tput smul` https://pki.symauth.com/certificate-service/?ac=516719&pf=2.16.840.1.113733.1.16.1.5.1.2.69508833 `tput rmul`"
+echo "For Non-Production NBN Certificate Requests use this link `tput smul` https://pki.symauth.com/certificate-service/?ac=516719&pf=2.16.840.1.113733.1.16.1.5.1.2.68857288 `tput rmul`"
+}
+
 while true
 do
 clear

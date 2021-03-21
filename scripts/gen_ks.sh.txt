@@ -8,6 +8,10 @@ echo "Processing for ${ST}"
 echo keytool -genkey -storepass "**" -keypass "***" -alias tomcat -keyalg RSA -keystore ${KSFILE} -dname CN=${FQDN},OU=Production,O="NBN Co Limited",ST=${ST},C=AU
 keytool -genkey -storepass ${STOREPASS} -keypass ${STOREPASS} -alias tomcat -keyalg RSA -keystore ${KSFILE} -dname CN=${FQDN},OU=Production,O="NBN Co Limited",ST=${ST},C=AU
 
+#Export Public key
+#keytool -export -alias certalias -keystore newkeystore.jks -file <public key name>.pem
+#keytool -export -alias newcert -keystore newkeystore.jks -file [insert any name here for your public key].pem
+
 #echo keytool -certreq -storepass "**" -keyalg RSA -alias tomcat -file ${CSRFILE} -keystore ${KSFILE}
 #keytool -certreq -storepass ${STOREPASS} -keyalg RSA -alias tomcat -file ${CSRFILE} -keystore ${KSFILE}
 

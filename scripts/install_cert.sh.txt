@@ -9,6 +9,7 @@ echo "Processing for ${ST}"
 #Validate the certificate files
 #Install the certificates into the jks
 #Provide instructions to copy the updated keystore back to the original directory
+#keytool -printcertreq -file test.csr -v
 
 echo keytool -certreq -storepass "**" -keyalg RSA -alias tomcat -file ${CSRFILE} -keystore ${KSFILE}
 keytool -certreq -storepass ${STOREPASS} -keyalg RSA -alias tomcat -file ${CSRFILE} -keystore ${KSFILE}
